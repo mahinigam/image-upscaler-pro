@@ -190,7 +190,7 @@ class RealESRGANUpscaler:
         Args:
             input_path: Path to input image
             output_path: Path for output image
-            scale: Scale factor (2 or 4)
+            scale: Scale factor (4)
             model: Model name to use
             progress_callback: Optional callback for progress updates (progress, message)
             
