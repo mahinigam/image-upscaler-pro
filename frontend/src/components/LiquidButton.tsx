@@ -1,10 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import type { HTMLMotionProps } from 'framer-motion';
 import clsx from 'clsx';
 import { Sparkles, Loader2 } from 'lucide-react';
 
-interface LiquidButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface LiquidButtonProps extends HTMLMotionProps<"button"> {
     isLoading?: boolean;
+    children: React.ReactNode;
 }
 
 export const LiquidButton: React.FC<LiquidButtonProps> = ({ children, isLoading, className, ...props }) => {
