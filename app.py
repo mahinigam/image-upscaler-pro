@@ -169,6 +169,12 @@ CUSTOM_CSS = """
     display: none !important;
 }
 
+/* Fix ImageSlider alignment */
+.image-slider img {
+    object-fit: contain !important;
+    object-position: center !important;
+}
+
 /* Hide footer */
 footer {
     display: none !important;
@@ -274,7 +280,6 @@ def create_interface() -> gr.Blocks:
         comparison = gr.ImageSlider(
             label="Drag to compare",
             type="numpy",
-            height=450,
         )
         
         # State to track download visibility
@@ -282,12 +287,21 @@ def create_interface() -> gr.Blocks:
             output, download_path, status = upscale_image(image, "4x", model, fmt)
             
             if output is not None and image is not None:
+                # Resize original to match upscaled for comparison
+                from PIL import Image as PILImage
+                original_pil = PILImage.fromarray(image)
+                original_resized = original_pil.resize(
+                    (output.shape[1], output.shape[0]),  # width, height
+                    PILImage.Resampling.LANCZOS
+                )
+                original_for_comparison = np.array(original_resized)
+                
                 return (
                     output,
                     status,
                     gr.update(visible=True),
                     download_path,
-                    (image, output),  # comparison slider
+                    (original_for_comparison, output),  # comparison slider - same size
                 )
             else:
                 return (
