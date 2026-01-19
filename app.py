@@ -276,16 +276,25 @@ def create_interface() -> gr.Blocks:
                 label="Download Upscaled Image",
             )
         
+        # Before/After comparison - collapsible
+        with gr.Accordion("Before / After Comparison", open=False) as comparison_section:
+            comparison = gr.ImageSlider(
+                label="Drag to compare",
+                type="numpy",
+                height=450,
+            )
+        
         # State to track download visibility
         def process_image(image, scale, model, fmt):
             output, download_path, status = upscale_image(image, scale, model, fmt)
             
-            if output is not None:
+            if output is not None and image is not None:
                 return (
                     output,
                     status,
                     gr.update(visible=True),
                     download_path,
+                    gr.update(value=(image, output)),  # comparison slider
                 )
             else:
                 return (
@@ -293,12 +302,13 @@ def create_interface() -> gr.Blocks:
                     status,
                     gr.update(visible=False),
                     None,
+                    gr.update(value=None),
                 )
         
         upscale_btn.click(
             fn=process_image,
             inputs=[input_image, scale_factor, model_choice, output_format],
-            outputs=[output_image, status_text, download_group, download_file],
+            outputs=[output_image, status_text, download_group, download_file, comparison],
             show_progress="minimal",
         )
     
