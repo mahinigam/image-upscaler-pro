@@ -261,12 +261,6 @@ class RealESRGANUpscaler:
                 progress_callback=progress_callback,
             )
             
-            # Read output image
-            output_image = Image.open(output_path)
-            result = np.array(output_image)
-            
-            return result
-            
         finally:
             # Clean up temp files
             for path in [input_path, output_path]:
