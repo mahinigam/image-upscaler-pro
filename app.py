@@ -229,15 +229,8 @@ def create_interface() -> gr.Blocks:
         # Settings in a clean horizontal layout
         with gr.Group(elem_classes=["settings-row"]):
             with gr.Row():
-                scale_factor = gr.Radio(
-                    choices=["2x", "4x"],
-                    value="4x",
-                    label="Scale",
-                    scale=1,
-                )
-                
                 model_choice = gr.Dropdown(
-                    choices=["Best Quality", "Faster", "Anime/Illustration"],
+                    choices=["Best Quality", "Anime/Illustration"],
                     value="Best Quality",
                     label="Model",
                     scale=1,
@@ -276,17 +269,17 @@ def create_interface() -> gr.Blocks:
                 label="Download Upscaled Image",
             )
         
-        # Before/After comparison - collapsible
-        with gr.Accordion("Before / After Comparison", open=False) as comparison_section:
-            comparison = gr.ImageSlider(
-                label="Drag to compare",
-                type="numpy",
-                height=450,
-            )
+        # Before/After comparison - always visible
+        gr.Markdown("### Before / After Comparison")
+        comparison = gr.ImageSlider(
+            label="Drag to compare",
+            type="numpy",
+            height=450,
+        )
         
         # State to track download visibility
-        def process_image(image, scale, model, fmt):
-            output, download_path, status = upscale_image(image, scale, model, fmt)
+        def process_image(image, model, fmt):
+            output, download_path, status = upscale_image(image, "4x", model, fmt)
             
             if output is not None and image is not None:
                 return (
@@ -294,7 +287,7 @@ def create_interface() -> gr.Blocks:
                     status,
                     gr.update(visible=True),
                     download_path,
-                    gr.update(value=(image, output)),  # comparison slider
+                    (image, output),  # comparison slider
                 )
             else:
                 return (
@@ -302,12 +295,12 @@ def create_interface() -> gr.Blocks:
                     status,
                     gr.update(visible=False),
                     None,
-                    gr.update(value=None),
+                    None,
                 )
         
         upscale_btn.click(
             fn=process_image,
-            inputs=[input_image, scale_factor, model_choice, output_format],
+            inputs=[input_image, model_choice, output_format],
             outputs=[output_image, status_text, download_group, download_file, comparison],
             show_progress="minimal",
         )
