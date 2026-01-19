@@ -72,8 +72,8 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen p-4 md:p-8 flex flex-col items-center">
-      <div className="w-full max-w-4xl">
+    <div className="min-h-screen p-4 md:p-6 flex flex-col items-center justify-center">
+      <div className="w-full max-w-2xl">
         <Header />
 
         <AnimatePresence mode="wait">

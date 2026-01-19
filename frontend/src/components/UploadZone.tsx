@@ -27,7 +27,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onFileSelect }) => {
             {...getRootProps()}
             className={clsx(
                 "relative group cursor-pointer transition-all duration-300 ease-out",
-                "bg-obsidian-surface/60 backdrop-blur-md border border-dashed rounded-lg h-64 flex flex-col items-center justify-center",
+                "bg-obsidian-surface/60 backdrop-blur-md border border-dashed rounded-3xl h-48 flex flex-col items-center justify-center",
                 isDragActive
                     ? "border-neon-cyan shadow-[0_0_30px_rgba(102,252,241,0.2)] bg-obsidian-surface/80"
                     : "border-gray-700 hover:border-gray-500 hover:bg-obsidian-surface/80"

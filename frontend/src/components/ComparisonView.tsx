@@ -8,7 +8,7 @@ interface ComparisonViewProps {
 
 export const ComparisonView: React.FC<ComparisonViewProps> = ({ originalUrl, processedUrl }) => {
     return (
-        <div className="border border-white/10 rounded-lg overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] mt-8 relative group">
+        <div className="border border-white/10 rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] mt-6 relative group">
             <div className="absolute top-4 left-4 z-10 bg-black/60 backdrop-blur-sm px-3 py-1 rounded text-xs font-heading font-bold uppercase tracking-wider text-white border border-white/10">
                 Original
             </div>

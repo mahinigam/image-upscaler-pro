@@ -16,7 +16,7 @@ export const LiquidButton: React.FC<LiquidButtonProps> = ({ children, isLoading,
             whileTap={{ scale: 0.98 }}
             disabled={isLoading}
             className={clsx(
-                "relative w-full py-5 px-8 overflow-hidden rounded-md group font-heading font-bold uppercase tracking-[0.15em] text-lg",
+                "relative w-full py-4 px-6 overflow-hidden rounded-full group font-heading font-bold uppercase tracking-[0.15em] text-sm",
                 "bg-gradient-to-r from-[#1a1a20] to-[#2a2a35] border border-white/10", // Base gradient
                 "hover:text-black hover:border-transparent transition-colors duration-300",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
