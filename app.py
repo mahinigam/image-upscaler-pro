@@ -312,7 +312,14 @@ def create_interface() -> gr.Blocks:
                     None,
                 )
         
+        def clear_status():
+            return ""
+        
         upscale_btn.click(
+            fn=clear_status,
+            outputs=status_text,
+            queue=False,
+        ).then(
             fn=process_image,
             inputs=[input_image, model_choice, output_format],
             outputs=[output_image, status_text, download_group, download_file, comparison],
