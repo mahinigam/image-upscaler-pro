@@ -275,12 +275,12 @@ def create_interface() -> gr.Blocks:
                 label="Download Upscaled Image",
             )
         
-        # Before/After comparison - always visible
-        gr.Markdown("### Before / After Comparison")
-        comparison = gr.ImageSlider(
-            label="Drag to compare",
-            type="numpy",
-        )
+        # Before/After comparison - collapsible
+        with gr.Accordion("Before / After Comparison", open=False) as comparison_section:
+            comparison = gr.ImageSlider(
+                label="Drag to compare",
+                type="numpy",
+            )
         
         # State to track download visibility
         def process_image(image, model, fmt):
