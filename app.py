@@ -1,6 +1,6 @@
 """
 Image Upscaler Web Application
-A Gradio-based web interface for high-quality image upscaling.
+A clean, modern Gradio-based web interface for high-quality image upscaling.
 """
 
 import os
@@ -24,57 +24,57 @@ def get_upscaler() -> RealESRGANUpscaler:
     return _upscaler
 
 
+def save_image_to_file(image: np.ndarray, output_format: str) -> str:
+    """Save the image to a file with the correct format."""
+    format_map = {"PNG": "png", "JPG": "jpg", "WebP": "webp"}
+    ext = format_map.get(output_format, "png")
+    
+    temp_dir = tempfile.gettempdir()
+    temp_path = os.path.join(temp_dir, f"upscaled_image.{ext}")
+    
+    pil_image = Image.fromarray(image)
+    
+    if ext == "jpg":
+        if pil_image.mode == "RGBA":
+            pil_image = pil_image.convert("RGB")
+        pil_image.save(temp_path, format="JPEG", quality=95)
+    elif ext == "webp":
+        pil_image.save(temp_path, format="WEBP", quality=95)
+    else:
+        pil_image.save(temp_path, format="PNG")
+    
+    return temp_path
+
+
 def upscale_image(
     input_image: np.ndarray,
     scale_factor: str,
     model_choice: str,
     output_format: str,
     progress: gr.Progress = gr.Progress(),
-) -> Tuple[Optional[np.ndarray], str]:
-    """
-    Upscale an image using Real-ESRGAN.
-    
-    Args:
-        input_image: Input image from Gradio
-        scale_factor: Scale factor as string ("2x", "4x")
-        model_choice: Model to use
-        output_format: Output format
-        progress: Gradio progress tracker
-        
-    Returns:
-        Tuple of (upscaled image, status message)
-    """
+) -> Tuple[Optional[np.ndarray], Optional[str], str]:
+    """Upscale an image using Real-ESRGAN."""
     if input_image is None:
-        return None, "Please upload an image first"
+        return None, None, "Upload an image to get started"
     
     try:
-        progress(0, desc="Initializing...")
+        progress(0.05, desc="Starting...")
         
-        # Get upscaler
         upscaler = get_upscaler()
-        
-        # Parse scale factor
         scale = int(scale_factor.replace("x", ""))
-        
-        # Get original dimensions
         h, w = input_image.shape[:2]
         new_h, new_w = h * scale, w * scale
         
-        progress(0.1, desc=f"Upscaling {w}x{h} to {new_w}x{new_h}...")
-        
-        # Define progress callback
         def update_progress(p: float, msg: str):
-            progress(0.1 + p * 0.8, desc=msg)
+            progress(0.05 + p * 0.85, desc=msg)
         
-        # Map model choice to model name
         model_map = {
-            "Real-ESRGAN x4plus (Best Quality)": "realesrgan-x4plus",
-            "Real-ESRNet x4plus (Faster)": "realesrnet-x4plus",
-            "Real-ESRGAN Anime (Illustrations)": "realesrgan-x4plus-anime",
+            "Best Quality": "realesrgan-x4plus",
+            "Faster": "realesrnet-x4plus",
+            "Anime/Illustration": "realesrgan-x4plus-anime",
         }
         model_name = model_map.get(model_choice, "realesrgan-x4plus")
         
-        # Upscale
         output_rgb = upscaler.upscale_image(
             image=input_image,
             scale=scale,
@@ -82,215 +82,219 @@ def upscale_image(
             progress_callback=update_progress,
         )
         
-        progress(1.0, desc="Done!")
+        progress(0.95, desc="Saving...")
+        download_path = save_image_to_file(output_rgb, output_format)
         
-        status = f"Successfully upscaled: {w}x{h} to {new_w}x{new_h} ({scale}x)"
-        return output_rgb, status
+        progress(1.0, desc="Done!")
+        status = f"Done! {w}x{h} -> {new_w}x{new_h} ({scale}x upscale)"
+        
+        return output_rgb, download_path, status
         
     except Exception as e:
-        error_msg = f"Error: {str(e)}"
-        print(f"[Error] {error_msg}")
-        return None, error_msg
+        return None, None, f"Error: {str(e)}"
 
 
-def save_image(image: np.ndarray, output_format: str) -> Optional[str]:
-    """Save the upscaled image to a temporary file for download."""
-    if image is None:
-        return None
-    
-    # Create temp file with appropriate extension
-    ext = output_format.lower()
-    if ext == "same as input":
-        ext = "png"
-    
-    temp_file = tempfile.NamedTemporaryFile(
-        suffix=f".{ext}",
-        delete=False,
-        dir=tempfile.gettempdir(),
-    )
-    
-    # Convert to PIL and save
-    pil_image = Image.fromarray(image)
-    
-    if ext in ["jpg", "jpeg"]:
-        # Remove alpha for JPEG
-        if pil_image.mode == "RGBA":
-            pil_image = pil_image.convert("RGB")
-        pil_image.save(temp_file.name, quality=95, optimize=True)
-    elif ext == "webp":
-        pil_image.save(temp_file.name, quality=95, lossless=False)
-    else:  # PNG
-        pil_image.save(temp_file.name, optimize=True)
-    
-    return temp_file.name
-
-
-# Custom CSS for styling
+# Modern, clean CSS
 CUSTOM_CSS = """
+/* Clean container */
 .gradio-container {
-    max-width: 1200px !important;
-    margin: auto !important;
+    max-width: 1100px !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
 }
 
-.title-text {
+/* Header styling */
+.header-title {
     text-align: center;
-    margin-bottom: 0.5em;
+    font-size: 2.2em !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.2em !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-.subtitle-text {
+.header-subtitle {
     text-align: center;
-    color: #666;
-    margin-bottom: 1.5em;
+    color: #888 !important;
+    font-size: 1em !important;
+    margin-bottom: 1.5em !important;
 }
 
+/* Settings row */
+.settings-row {
+    background: rgba(100, 100, 100, 0.1);
+    border-radius: 12px;
+    padding: 16px !important;
+    margin: 12px 0 !important;
+}
+
+/* Button styling */
+.primary-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    font-weight: 600 !important;
+    font-size: 1.1em !important;
+    padding: 12px 32px !important;
+    border-radius: 8px !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
+}
+
+/* Status text */
+.status-text {
+    text-align: center;
+    font-size: 0.95em;
+    color: #888;
+}
+
+/* Image containers */
+.image-container {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+
+/* Download section */
+.download-section {
+    margin-top: 16px;
+}
+
+/* Hide footer */
 footer {
     display: none !important;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .gradio-container {
+        padding: 12px !important;
+    }
 }
 """
 
 
 def create_interface() -> gr.Blocks:
-    """Create the Gradio interface."""
+    """Create a clean, modern Gradio interface."""
     
     with gr.Blocks(
-        title="Image Upscaler",
+        title="Image Upscaler Pro",
         css=CUSTOM_CSS,
         theme=gr.themes.Soft(
             primary_hue="indigo",
-            secondary_hue="blue",
+            secondary_hue="purple",
+            neutral_hue="slate",
         ),
     ) as app:
-        # Header
+        
+        # Clean Header
         gr.Markdown(
-            """
-            # Image Upscaler Pro
-            ### High-quality AI-powered image upscaling using Real-ESRGAN
-            """,
-            elem_classes=["title-text"],
+            "# Image Upscaler Pro",
+            elem_classes=["header-title"],
+        )
+        gr.Markdown(
+            "AI-powered image upscaling using Real-ESRGAN",
+            elem_classes=["header-subtitle"],
         )
         
-        with gr.Row():
-            # Left column - Input
+        # Main content: Side-by-side images
+        with gr.Row(equal_height=True):
             with gr.Column(scale=1):
                 input_image = gr.Image(
-                    label="Upload Image",
+                    label="Original",
                     type="numpy",
                     sources=["upload", "clipboard"],
-                    height=400,
+                    height=350,
+                    elem_classes=["image-container"],
+                )
+            
+            with gr.Column(scale=1):
+                output_image = gr.Image(
+                    label="Upscaled",
+                    type="numpy",
+                    height=350,
+                    interactive=False,
+                    elem_classes=["image-container"],
+                )
+        
+        # Settings in a clean horizontal layout
+        with gr.Group(elem_classes=["settings-row"]):
+            with gr.Row():
+                scale_factor = gr.Radio(
+                    choices=["2x", "4x", "8x"],
+                    value="4x",
+                    label="Scale",
+                    scale=1,
                 )
                 
-                with gr.Group():
-                    gr.Markdown("### Settings")
-                    
-                    scale_factor = gr.Radio(
-                        choices=["2x", "4x", "8x"],
-                        value="4x",
-                        label="Scale Factor",
-                        info="4x recommended for best results, 8x for maximum enlargement",
-                    )
-                    
-                    model_choice = gr.Dropdown(
-                        choices=[
-                            "Real-ESRGAN x4plus (Best Quality)",
-                            "Real-ESRNet x4plus (Faster)",
-                            "Real-ESRGAN Anime (Illustrations)",
-                        ],
-                        value="Real-ESRGAN x4plus (Best Quality)",
-                        label="Model",
-                        info="Choose model based on your image type",
-                    )
-                    
-                    output_format = gr.Dropdown(
-                        choices=["PNG", "JPG", "WebP"],
-                        value="PNG",
-                        label="Output Format",
-                        info="PNG = lossless, JPG/WebP = smaller file size",
-                    )
+                model_choice = gr.Dropdown(
+                    choices=["Best Quality", "Faster", "Anime/Illustration"],
+                    value="Best Quality",
+                    label="Model",
+                    scale=1,
+                )
                 
+                output_format = gr.Dropdown(
+                    choices=["PNG", "JPG", "WebP"],
+                    value="PNG",
+                    label="Format",
+                    scale=1,
+                )
+        
+        # Action button - centered
+        with gr.Row():
+            with gr.Column(scale=1):
+                pass
+            with gr.Column(scale=2):
                 upscale_btn = gr.Button(
                     "Upscale Image",
                     variant="primary",
                     size="lg",
+                    elem_classes=["primary-btn"],
                 )
-            
-            # Right column - Output
             with gr.Column(scale=1):
-                output_image = gr.Image(
-                    label="Upscaled Result",
-                    type="numpy",
-                    height=400,
-                    interactive=False,
-                )
-                
-                status_text = gr.Textbox(
-                    label="Status",
-                    value="Ready to upscale...",
-                    interactive=False,
-                    lines=1,
-                )
-                
-                download_btn = gr.Button(
-                    "Download Result",
-                    variant="secondary",
-                    size="lg",
-                )
-                
-                download_file = gr.File(
-                    label="Download",
-                    visible=False,
-                )
+                pass
         
-        # Image comparison slider
-        gr.Markdown("### Before / After Comparison")
-        comparison = gr.ImageSlider(
-            label="Drag to compare",
-            type="numpy",
-            height=500,
+        # Status message
+        status_text = gr.Markdown(
+            "Upload an image to get started",
+            elem_classes=["status-text"],
         )
         
-        # Footer info
-        gr.Markdown(
-            """
-            ---
-            **Tips:**
-            - Use **4x** for the best balance of quality and processing time
-            - Use **2x** for quick upscaling with good quality
-            - **Real-ESRGAN x4plus** provides the highest quality for photos
-            - **PNG** format preserves all details (lossless)
-            """,
-            elem_classes=["subtitle-text"],
-        )
+        # Download section - appears after processing
+        with gr.Group(elem_classes=["download-section"], visible=False) as download_group:
+            download_file = gr.File(
+                label="Download Upscaled Image",
+            )
         
-        # Event handlers
-        def process_and_update(image, scale, model, fmt):
-            output, status = upscale_image(image, scale, model, fmt)
-            # Update comparison slider
-            if output is not None and image is not None:
-                comparison_value = (image, output)
+        # State to track download visibility
+        def process_image(image, scale, model, fmt):
+            output, download_path, status = upscale_image(image, scale, model, fmt)
+            
+            if output is not None:
+                return (
+                    output,
+                    status,
+                    gr.update(visible=True),
+                    download_path,
+                )
             else:
-                comparison_value = None
-            return output, status, comparison_value
+                return (
+                    None,
+                    status,
+                    gr.update(visible=False),
+                    None,
+                )
         
         upscale_btn.click(
-            fn=process_and_update,
+            fn=process_image,
             inputs=[input_image, scale_factor, model_choice, output_format],
-            outputs=[output_image, status_text, comparison],
-            show_progress=True,
-        )
-        
-        def handle_download(image, fmt):
-            if image is None:
-                return None
-            return save_image(image, fmt)
-        
-        download_btn.click(
-            fn=handle_download,
-            inputs=[output_image, output_format],
-            outputs=[download_file],
-        ).then(
-            fn=lambda x: gr.update(visible=x is not None),
-            inputs=[download_file],
-            outputs=[download_file],
+            outputs=[output_image, status_text, download_group, download_file],
+            show_progress="minimal",
         )
     
     return app
@@ -305,7 +309,6 @@ def main():
     
     app = create_interface()
     
-    # Launch with share=False for local use
     app.launch(
         server_name="127.0.0.1",
         server_port=7860,
