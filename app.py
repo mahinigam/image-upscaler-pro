@@ -96,94 +96,204 @@ def upscale_image(
 
 # Modern, clean CSS
 CUSTOM_CSS = """
-/* Clean container */
-.gradio-container {
-    max-width: 1100px !important;
-    margin: 0 auto !important;
-    padding: 20px !important;
+/* obsidian-chrome.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Saira:wght@400;500;600;700&display=swap');
+
+:root {
+    --obsidian-base: #050510;
+    --obsidian-surface: #121218;
+    --obsidian-overlay: rgba(20, 20, 30, 0.6);
+    --chrome-border: 1px solid rgba(255, 255, 255, 0.12);
+    --chrome-highlight: 1px solid rgba(255, 255, 255, 0.25);
+    --neon-cyan: #00f3ff;
+    --neon-purple: #bc13fe;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
 }
 
-/* Header styling */
+/* Base Reset & Background */
+body {
+    background-color: var(--obsidian-base) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px) !important;
+    background-size: 40px 40px !important;
+    background-attachment: fixed !important; /* Ensures grid stays while scrolling */
+    font-family: 'Outfit', sans-serif !important;
+    color: var(--text-primary) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.gradio-container {
+    background: transparent !important; /* Let body grid show through */
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 60px 20px !important;
+    border: none !important;
+}
+
+/* Header Typography */
 .header-title {
     text-align: center;
-    font-size: 2.2em !important;
+    font-family: 'Saira', sans-serif !important;
+    font-size: 4rem !important;
     font-weight: 700 !important;
-    margin-bottom: 0.2em !important;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem !important;
+    background: linear-gradient(180deg, #ffffff 0%, #a0a0a0 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
+    text-shadow: 0 0 40px rgba(255,255,255,0.15);
 }
 
 .header-subtitle {
     text-align: center;
-    color: #888 !important;
-    font-size: 1em !important;
-    margin-bottom: 1.5em !important;
+    color: var(--neon-cyan) !important;
+    font-family: 'Saira', sans-serif !important;
+    font-size: 1.2rem !important;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 4rem !important;
+    opacity: 0.9;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
 }
 
-/* Settings row */
-.settings-row {
-    background: rgba(100, 100, 100, 0.1);
-    border-radius: 12px;
-    padding: 16px !important;
-    margin: 12px 0 !important;
-}
-
-/* Button styling */
-.primary-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+/* Component Styling - Ultra Modern & Seamless */
+/* Remove old-school boxes */
+.gr-box, .gr-panel {
+    background: transparent !important;
     border: none !important;
-    font-weight: 600 !important;
-    font-size: 1.1em !important;
-    padding: 12px 32px !important;
+    box-shadow: none !important;
+}
+
+/* Settings Row - Floating Tech Bar */
+.settings-row {
+    background: rgba(18, 18, 24, 0.6) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 8px !important;
-    transition: transform 0.2s, box-shadow 0.2s !important;
+    padding: 24px !important;
+    margin: 20px 0 !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+}
+
+/* Input Fields - High Tech */
+.gr-input, .gr-dropdown, .gr-dropdown > button, .gr-radio {
+    background: #0a0a10 !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--text-primary) !important;
+    border-radius: 0px !important; /* Sharp corners */
+    font-family: 'Outfit', sans-serif !important;
+    transition: all 0.2s ease;
+}
+
+.gr-input:focus, .gr-dropdown:focus-within {
+    border-color: var(--neon-cyan) !important;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.1) !important;
+}
+
+/* Labels */
+label span, .block-label {
+    font-family: 'Saira', sans-serif !important;
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 1.5px !important;
+    color: var(--neon-cyan) !important;
+    margin-bottom: 10px !important;
+    text-shadow: 0 0 5px rgba(0, 243, 255, 0.2);
+}
+
+/* Image Containers - Cyberpunk Frames */
+.image-container {
+    background: rgba(10, 10, 16, 0.5) !important;
+    border: 1px solid #333 !important;
+    border-radius: 4px !important;
+    position: relative;
+}
+/* Corner Accents for Tech Look */
+.image-container::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 20px; height: 20px;
+    border-top: 2px solid var(--neon-cyan);
+    border-left: 2px solid var(--neon-cyan);
+    z-index: 10;
+}
+.image-container::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 20px; height: 20px;
+    border-bottom: 2px solid var(--neon-cyan);
+    border-right: 2px solid var(--neon-cyan);
+    z-index: 10;
+}
+
+/* Primary Action Button (Liquid Metal) */
+.primary-btn {
+    background: linear-gradient(90deg, #1a1a20 0%, #2a2a35 100%) !important;
+    border: 1px solid rgba(102, 252, 241, 0.3) !important;
+    color: var(--neon-cyan) !important;
+    font-family: 'Saira', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 1.3rem !important;
+    padding: 20px 0 !important;
+    border-radius: 0px !important; /* Sharp */
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.05);
+    margin-top: 20px !important;
+    width: 100%;
 }
 
 .primary-btn:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
+    background: var(--neon-cyan) !important;
+    color: #000 !important;
+    box-shadow: 0 0 50px rgba(0, 243, 255, 0.3) !important;
+    letter-spacing: 6px; /* Text expansion effect */
 }
 
-/* Status text */
+/* Accordion */
+.gr-accordion {
+    background: rgba(255,255,255,0.02) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 0px !important;
+}
+.gr-accordion .label-wrap {
+    color: var(--text-primary) !important;
+    font-family: 'Saira', sans-serif !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Comparison Slider */
+.gr-image-slider {
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+/* Status Text */
 .status-text {
-    text-align: center;
-    font-size: 0.95em;
-    color: #888;
+    font-family: 'Saira', sans-serif;
+    color: var(--neon-purple);
+    letter-spacing: 2px;
 }
 
-/* Image containers */
-.image-container {
-    border-radius: 12px !important;
-    overflow: hidden !important;
-}
+/* Footer & Utilities */
+footer { display: none !important; }
+.download-section { margin-top: 20px; }
+.image-container button[aria-label="Download"] { display: none !important; }
 
-/* Download section */
-.download-section {
-    margin-top: 16px;
-}
-
-/* Hide Gradio's built-in download button on output image */
-.image-container button[aria-label="Download"] {
-    display: none !important;
-}
-
-/* Fix ImageSlider alignment */
-.image-slider img {
-    object-fit: contain !important;
-    object-position: center !important;
-}
-
-/* Hide footer */
-footer {
-    display: none !important;
-}
-
-/* Responsive improvements */
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; background: #000; }
+::-webkit-scrollbar-thumb { background: #333; }
 @media (max-width: 768px) {
     .gradio-container {
-        padding: 12px !important;
+        padding: 20px !important;
     }
 }
 """
