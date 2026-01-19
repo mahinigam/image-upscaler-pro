@@ -164,6 +164,11 @@ CUSTOM_CSS = """
     margin-top: 16px;
 }
 
+/* Hide Gradio's built-in download button on output image */
+.image-container button[aria-label="Download"] {
+    display: none !important;
+}
+
 /* Hide footer */
 footer {
     display: none !important;
