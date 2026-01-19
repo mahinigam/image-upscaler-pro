@@ -225,7 +225,7 @@ def create_interface() -> gr.Blocks:
         with gr.Group(elem_classes=["settings-row"]):
             with gr.Row():
                 scale_factor = gr.Radio(
-                    choices=["2x", "4x", "8x"],
+                    choices=["2x", "4x"],
                     value="4x",
                     label="Scale",
                     scale=1,

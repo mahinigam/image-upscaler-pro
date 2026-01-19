@@ -190,7 +190,7 @@ class RealESRGANUpscaler:
         Args:
             input_path: Path to input image
             output_path: Path for output image
-            scale: Scale factor (2, 4, or 8)
+            scale: Scale factor (2 or 4)
             model: Model name to use
             progress_callback: Optional callback for progress updates (progress, message)
             
@@ -203,36 +203,15 @@ class RealESRGANUpscaler:
         if model not in self.MODELS:
             raise ValueError(f"Unknown model: {model}. Available: {list(self.MODELS.keys())}")
         
-        if scale not in [2, 4, 8]:
-            raise ValueError(f"Scale must be 2, 4, or 8. Got: {scale}")
+        if scale not in [2, 4]:
+            raise ValueError(f"Scale must be 2 or 4. Got: {scale}")
         
         try:
-            if scale == 8:
-                # 8x = two passes of 4x (total: 4 * 4 = 16x, but we control output)
-                # Actually: 8x = 4x then 2x = 4*2 = 8x
-                if progress_callback:
-                    progress_callback(0.1, "Pass 1/2: Applying 4x upscaling...")
-                
-                # First pass: 4x
-                temp_path = output_path + ".temp.png"
-                self._run_upscale(input_path, temp_path, model, 4)
-                
-                if progress_callback:
-                    progress_callback(0.5, "Pass 2/2: Applying 2x upscaling...")
-                
-                # Second pass: 2x on the 4x result
-                self._run_upscale(temp_path, output_path, model, 2)
-                
-                # Clean up temp file
-                if os.path.exists(temp_path):
-                    os.unlink(temp_path)
-                
-            else:
-                # Direct upscale (2x or 4x)
-                if progress_callback:
-                    progress_callback(0.1, f"Applying {scale}x upscaling...")
-                
-                self._run_upscale(input_path, output_path, model, scale)
+            # Direct upscale (2x or 4x)
+            if progress_callback:
+                progress_callback(0.1, f"Applying {scale}x upscaling...")
+            
+            self._run_upscale(input_path, output_path, model, scale)
             
             if progress_callback:
                 progress_callback(1.0, "Complete!")
