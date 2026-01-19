@@ -165,22 +165,12 @@ class RealESRGANUpscaler:
             "-s", str(scale),
         ]
         
-        # Debug: print the command
-        print(f"[Upscaler] Running: {' '.join(cmd)}")
-        
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
             cwd=str(self.models_dir),
         )
-        
-        # Debug: print result
-        print(f"[Upscaler] Return code: {result.returncode}")
-        if result.stdout:
-            print(f"[Upscaler] stdout: {result.stdout}")
-        if result.stderr:
-            print(f"[Upscaler] stderr: {result.stderr}")
         
         if result.returncode != 0:
             error_msg = result.stderr or result.stdout or "Unknown error"
@@ -260,7 +250,6 @@ class RealESRGANUpscaler:
         try:
             # Save input image
             pil_image = Image.fromarray(image)
-            print(f"[Upscaler] Input image size: {pil_image.size}, mode: {pil_image.mode}")
             pil_image.save(input_path, format="PNG")
             
             # Upscale
@@ -274,9 +263,7 @@ class RealESRGANUpscaler:
             
             # Read output image
             output_image = Image.open(output_path)
-            print(f"[Upscaler] Output image size: {output_image.size}, mode: {output_image.mode}")
             result = np.array(output_image)
-            print(f"[Upscaler] Result array shape: {result.shape}")
             
             return result
             

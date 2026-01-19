@@ -15,7 +15,7 @@
 
 ## Overview
 
-Image Upscaler Pro is a local, offline image upscaling tool that uses **Real-ESRGAN** - a state-of-the-art deep learning model for image super-resolution. It preserves fine details, textures, and edges while enlarging images up to 8x their original size.
+Image Upscaler Pro is a local, offline image upscaling tool that uses **Real-ESRGAN** - a state-of-the-art deep learning model for image super-resolution. It preserves fine details, textures, and edges while enlarging images to 4x their original size.
 
 **Key Highlights:**
 - Same quality as Real-ESRGAN PyTorch implementation
@@ -30,8 +30,8 @@ Image Upscaler Pro is a local, offline image upscaling tool that uses **Real-ESR
 | Feature | Description |
 |---------|-------------|
 | **AI Upscaling** | Real-ESRGAN neural network for best-in-class quality |
-| **Multiple Scales** | 2x, 4x, and 8x enlargement options |
-| **Model Selection** | Choose between quality-focused and speed-focused models |
+| **4x Enlargement** | Quadruples image resolution |
+| **Model Selection** | Best Quality or Anime/Illustration optimized |
 | **Format Support** | PNG (lossless), JPG, WebP output formats |
 | **Before/After** | Interactive comparison slider |
 | **Drag & Drop** | Simple web interface with file upload |
@@ -50,8 +50,8 @@ Image Upscaler Pro is a local, offline image upscaling tool that uses **Real-ESR
 
 ```bash
 # Clone the repository
-git clone https://github.com/mahinigam/image-upscaler.git
-cd image-upscaler
+git clone https://github.com/mahinigam/image-upscaler-pro.git
+cd image-upscaler-pro
 
 # Make the run script executable
 chmod +x run.sh
@@ -74,26 +74,17 @@ On your first upscale, the Real-ESRGAN binary (~10MB) will be downloaded automat
 ## Usage
 
 1. **Upload** - Drag and drop an image or click to browse
-2. **Configure** - Select scale factor and model
+2. **Configure** - Select model and output format
 3. **Upscale** - Click "Upscale Image"
 4. **Compare** - Use the before/after slider
-5. **Download** - Save the result
-
-### Scale Factors
-
-| Scale | Output Size | Best For |
-|-------|-------------|----------|
-| 2x | 2× width & height | Quick enhancement |
-| 4x | 4× width & height | Recommended balance |
-| 8x | 8× width & height | Maximum enlargement |
+5. **Download** - Save the result in your chosen format
 
 ### Models
 
-| Model | Quality | Speed | Best For |
-|-------|---------|-------|----------|
-| Real-ESRGAN x4plus | Highest | Slower | Photos, portraits |
-| Real-ESRNet x4plus | High | Faster | Batch processing |
-| Real-ESRGAN Anime | Highest | Slower | Illustrations, artwork |
+| Model | Best For |
+|-------|----------|
+| **Best Quality** | Photos, portraits, general images |
+| **Anime/Illustration** | Artwork, illustrations, anime |
 
 ---
 
@@ -117,7 +108,7 @@ On your first upscale, the Real-ESRGAN binary (~10MB) will be downloaded automat
 │        │                 GPU (Vulkan/Metal)                     │
 │        │                        │                               │
 │        ▼                        ▼                               │
-│   Upscaled Image ◄──────────────┘                              │
+│   4x Upscaled Image ◄───────────┘                              │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -140,7 +131,7 @@ The tool uses the official **realesrgan-ncnn-vulkan** binary from the Real-ESRGA
 ## Project Structure
 
 ```
-image-upscaler/
+image-upscaler-pro/
 ├── app.py              # Gradio web interface
 ├── upscaler.py         # Core upscaling engine
 ├── requirements.txt    # Python dependencies
@@ -175,10 +166,6 @@ rm -rf venv
 **Binary download fails?**
 - Check your internet connection
 - The binary is downloaded from GitHub releases
-
-**Slow performance?**
-- Close other GPU-intensive applications
-- Use 2x scale for faster processing
 
 ---
 
