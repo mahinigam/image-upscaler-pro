@@ -24,7 +24,7 @@ app.add_middleware(
 upscaler = RealESRGANUpscaler()
 
 # Ensure temp directory exists
-TEMP_DIR = "temp_uploads"
+TEMP_DIR = os.path.abspath("temp_uploads")
 os.makedirs(TEMP_DIR, exist_ok=True)
 
 @app.get("/")
@@ -44,31 +44,23 @@ async def upscale_image(
         with open(input_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
             
-        # Read image to numpy for upscaler compatibility (wrapper logic)
-        # Actually our upscaler.py takes a path or numpy array. 
-        # Let's check upscaler.py logic. It expects numpy array in `upscale` method, 
-        # but `_run_upscale` takes paths.
-        # Let's load it as numpy to pass to our existing class if needed, 
-        # OR just modify logic to handle paths.
-        # Looking at legacy upscaler.py, `upscale` accepts `image: np.ndarray`.
-        
-        img = cv2.imread(input_path)
-        if img is None:
-            raise HTTPException(status_code=400, detail="Invalid image format")
-        
-        # Convert BGR to RGB (OpenCV loads BGR)
-        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        # Prepare output path
+        output_filename = f"upscaled_{int(time.time())}.{format}"
+        output_path = os.path.join(TEMP_DIR, output_filename)
         
         # Run Upscaling
-        # Note: upscaler.upscale takes (image_rgb, scale, model_name, format)
-        # and returns (output_rgb, output_path, message)
+        # upscaler.upscale takes (input_path, output_path, scale, model, callback)
+        result_path = upscaler.upscale(
+            input_path=input_path,
+            output_path=output_path,
+            scale=4, # Hardcoded 4x as per standard
+            model=model
+        )
         
-        output_rgb, output_path, message = upscaler.upscale(img_rgb, 4, model, format)
-        
-        if output_path and os.path.exists(output_path):
-            return FileResponse(output_path, media_type=f"image/{format}", filename=os.path.basename(output_path))
+        if result_path and os.path.exists(result_path):
+            return FileResponse(result_path, media_type=f"image/{format}", filename=os.path.basename(result_path))
         else:
-            raise HTTPException(status_code=500, detail=f"Upscaling failed: {message}")
+            raise HTTPException(status_code=500, detail="Upscaling returned no output")
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

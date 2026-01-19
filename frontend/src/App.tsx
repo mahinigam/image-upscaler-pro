@@ -114,12 +114,23 @@ function App() {
                 )}
 
                 {status === 'completed' && (
-                  <button
-                    onClick={handleReset}
-                    className="text-gray-500 hover:text-white underline font-heading tracking-widest text-xs uppercase"
-                  >
-                    Upload New Image
-                  </button>
+                  <div className="flex gap-4">
+                    {processedUrl && (
+                      <a
+                        href={processedUrl}
+                        download={`upscaled_${Date.now()}.${format}`}
+                        className="bg-neon-cyan/20 border border-neon-cyan/50 text-neon-cyan hover:bg-neon-cyan hover:text-black transition-all px-6 py-3 rounded uppercase font-heading tracking-widest text-sm font-bold flex items-center gap-2"
+                      >
+                        Download Image
+                      </a>
+                    )}
+                    <button
+                      onClick={handleReset}
+                      className="text-gray-500 hover:text-white underline font-heading tracking-widest text-xs uppercase"
+                    >
+                      Upload New
+                    </button>
+                  </div>
                 )}
               </div>
 
