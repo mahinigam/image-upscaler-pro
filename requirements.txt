@@ -1,0 +1,13 @@
+# Image Upscaler - Dependencies
+# Minimal dependencies for maximum compatibility with Python 3.14
+
+# Image processing
+opencv-python-headless>=4.8.0
+pillow>=10.0.0
+numpy>=1.26.0
+
+# Web interface
+gradio>=4.0.0
+
+# For downloading the upscaler binary
+requests>=2.31.0
